@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+  <head lang="en">
+    <meta charset="utf-8" />
+    <title>Dola Chat</title>
+  </head>
+  <body>
+    {{user_name}}: <input type="text" name="message" id="message" /> 
+    <input type="button" id="send" name="send" value="send" />
+    <a href="{{logout_url}}">logout</a>
+    <hr />
+    <div id="chatlog">
+    </div>
+    <script src="/_ah/channel/jsapi"></script>
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+		<script src="static/js/chat.js"></script>
+		<script>
+		  init("{{token}}");
+		</script>
+	</body>
+</html>
