@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Dola Vision</title>
+  </head>
+  <body>
+    <div>
+    <video id="stream" width="200" height="200" autoplay></video>
+    </div>
+    
+    <div>
+    <button id="label_snap">Snap & Label</button>
+    <button id="landmark_snap">Recognize Landmark</button>
+    <button id="ocr_snap">OCR</button>
+    </div>
+    
+    <div>
+    <canvas id="canvas" width="200" height="200"></canvas>
+    </div>
+    <div id="message">
+    </div>
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+    <script>
+    // setup camera
+    var video = document.getElementById("stream");  
+    var errBack = function(err) {
+      console.log(err);
+    };
+      
+    if(navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        // Not adding `{ audio: true }` since we only want video now
+        navigator.mediaDevices.getUserMedia({ video: true }).then(function(stream) {
+            video.src = window.URL.createObjectURL(stream);
+            video.play();
+        });
+    }
+    else if(navigator.getUserMedia) { // Standard
+        navigator.getUserMedia({ video: true }, function(stream) {
+            video.src = stream;
+            video.play();
+        }, errBack);
+    } else if(navigator.webkitGetUserMedia) { // WebKit-prefixed
+        navigator.webkitGetUserMedia({ video: true }, function(stream){
+            video.src = window.URL.createObjectURL(stream);
+            video.play();
+        }, errBack);
+    } else if(navigator.mozGetUserMedia) { // Mozilla-prefixed
+        navigator.mozGetUserMedia({ video: true }, function(stream){
+            video.src = window.URL.createObjectURL(stream);
+            video.play();
+        }, errBack);
+    }
+    else {
+      console.log("Your device doesn't have a usable camera");
+    }
+    // catpure the image
+    var canvas = document.getElementById("canvas");
+    var context = canvas.getContext("2d");
+    
+    var getBase64Image = function(canvas) {
+      // encode image into base64 string from a canvas
+      var dataURL = canvas.toDataURL("image/png");
+      return dataURL.replace(/^data:image\/(png|jpg);base64,/, "");
+    };
+    
+    document.getElementById("label_snap").addEventListener("click", function(evnt){
+      //context.clearRect(0, 0, context.canvas.width, context.canvas.height);
+      context.drawImage(video, 0, 0, context.canvas.width, context.canvas.height);
+      var imageContent = getBase64Image(canvas);
+      //console.log(imageContent);
+      $.ajax({
+        url: "/detect_label",
+        method: "POST",
+        data: {
+          image64: imageContent
+        },
+        success: function( result ) {
+          console.log("succeeded posting to detect_label");
+          console.log(result);
+          $("#message").html("It is a " + result.label + " !");
+        }
+      });
+    });
+    
+    document.getElementById("landmark_snap").addEventListener("click", function(evnt){
+      //context.clearRect(0, 0, context.canvas.width, context.canvas.height);
+      context.drawImage(video, 0, 0, context.canvas.width, context.canvas.height);
+      var imageContent = getBase64Image(canvas);
+      //console.log(imageContent);
+      $.ajax({
+        url: "/detect_landmark",
+        method: "POST",
+        data: {
+          image64: imageContent
+        },
+        success: function( result ) {
+          console.log("succeeded posting to detect_landmark");
+          console.log(result);
+          $("#message").html("This place is " + result.landmark + " !");
+        }
+      });
+    });
+    
+    document.getElementById("ocr_snap").addEventListener("click", function(evnt){
+      //context.clearRect(0, 0, context.canvas.width, context.canvas.height);
+      context.drawImage(video, 0, 0, context.canvas.width, context.canvas.height);
+      var imageContent = getBase64Image(canvas);
+      //console.log(imageContent);
+      $.ajax({
+        url: "/detect_ocr",
+        method: "POST",
+        data: {
+          image64: imageContent
+        },
+        success: function( result ) {
+          console.log("succeeded posting to detect_ocr");
+          console.log(result);
+          $("#message").html("Text: " + result.ocr + " !");
+        }
+      });
+    });
+    </script>
+  </body>
+</html>
