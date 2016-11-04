@@ -23,8 +23,9 @@ def detect_label():
   im.save( img_path )
   img = cv2.imread(img_path)
   img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-  response = sign_classifier.predict(img).sort_values("probs", ascending=False).head(5).to_html()
+  
   try:
+    response = sign_classifier.predict(img).sort_values("probs", ascending=False).head(5).to_html()
     label = response
     result = {'label': label}
   except:
