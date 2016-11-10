@@ -3,23 +3,47 @@
   <head>
     <meta charset="utf-8" />
     <title>Dola Vision</title>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+    
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
   </head>
   <body>
-    <div>
-    <video id="stream" width="200" height="200" autoplay></video>
+  <div class="row">
+    <div class="col-md-8">
+    <video id="stream" width="800" height="600" autoplay></video>
     </div>
     
-    <div>
-    <button id="label_snap">Snap & Label</button>
-    <button id="landmark_snap">Recognize Landmark</button>
-    <button id="ocr_snap">OCR</button>
+    <div class="col-md-4">
+      <div class="row">
+      <button id="label_snap" class="btn btn-primary col-md-4">Snap & Label</button>
+      <button id="landmark_snap" class="btn btn-primary col-md-4">Recognize Landmark</button>
+      <button id="ocr_snap" class="btn btn-primary col-md-4">OCR</button>
+      </div>
+    
+    
+    
+    <div class="row">
+      <canvas id="canvas" width="400" height="300"></canvas>
     </div>
     
-    <div>
-    <canvas id="canvas" width="200" height="200"></canvas>
+    <div class="row">
+      <div class="alert alert-info col-md-8">Detection Result:</div>
     </div>
-    <div id="message">
+    
+    <div class="row">
+      <div id="message" class="alert alert-info col-md-8">nothing yet</div>
     </div>
+    
+    </div>
+  </div>
+    
+    
+    
     <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
     <script>
     // setup camera
@@ -78,7 +102,7 @@
         success: function( result ) {
           console.log("succeeded posting to detect_label");
           console.log(result);
-          $("#message").html("It is a " + result.label + " !");
+          $("#message").html(result.label);
         }
       });
     });
@@ -97,7 +121,7 @@
         success: function( result ) {
           console.log("succeeded posting to detect_landmark");
           console.log(result);
-          $("#message").html("This place is " + result.landmark + " !");
+          $("#message").html(result.landmark);
         }
       });
     });
@@ -116,7 +140,7 @@
         success: function( result ) {
           console.log("succeeded posting to detect_ocr");
           console.log(result);
-          $("#message").html("Text: " + result.ocr + " !");
+          $("#message").html(result.ocr);
         }
       });
     });
