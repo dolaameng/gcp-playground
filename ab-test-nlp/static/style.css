@@ -1,0 +1,22 @@
+.row {
+    margin-top: 20px;
+}
+
+.list-group-item {
+    font-size: small;
+    font-family: sans-serif;
+}
+
+#question {
+    width: 400px;
+}
+
+#question-list {
+    margin-top: 40px;
+}
+
+.center-block {
+   margin-left:auto;
+   margin-right:auto;
+   display:block;
+}

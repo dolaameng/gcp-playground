@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+    <head lang="en">
+        <meta charset="utf-8" />
+        <title>A/B Test Analysis by Human Language</title>
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>    
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+    
+    <link rel="stylesheet" href="http://cdn.pydata.org/bokeh/release/bokeh-0.12.3.min.css" />
+    <link rel="stylesheet" href="http://cdn.pydata.org/bokeh/release/bokeh-widgets-0.12.3.min.css" />
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    
+    <link rel="stylesheet" href="{{url_for('static', filename='voice.css')}}" />
+    <link rel="stylesheet" href="{{url_for('static', filename='style.css')}}" />
+    </head>
+    <body>
+        <div class="container">
+        <!-- information about data -->
+        <div class="row">
+            <h1 class="center">A/B Test Analysis in Human Language</h1>
+            <div class="row">
+              <button class="btn btn-info" data-toggle="collapse" data-target="#why">Why</button>
+              <button  class="btn btn-info" data-toggle="collapse" data-target="#what">What</button>
+              <button  class="btn btn-info" data-toggle="collapse" data-target="#how">How</button>
+            </div>
+            <div class="row">
+              <div id="why" class="collapse">
+                <b>Purpose</b>
+                <p>A/B test is important in data-driven business, but usually involves heavy math. </p>
+                <p>The technical intransparency poses barriers to BI analysis and customer communications.</p>
+                <p>Ideally, A/B analysis should be as natural as talking to your colleague, in human languages.</p>
+              </div>
+            
+              <div id="what" class="collapse">
+                <b>Demostratoin</b>
+                <p>This is a demostration of how a typical A/B test analysis should be done in natural language.</p> 
+                <p>We are using an artificial dataset for the demostration purpose, but image using your own data in the future.</p>
+                <p><a href="{{url_for('static', filename='ab_result.csv')}}">The dataset</a> is a typical result (in csv) of an A/B test, including important factors such as timestamps, groups of observations(A/B/C) and effects (success/converted/landing).</p>
+                <p>You can look at the dataset <a href="/dataset">HERE</a></p>
+              </div>
+            
+              <div id="how" class="collapse">
+                <b>How to use</b>
+                <p>You don't talk to your colleagues in SAS, Python or Statistics. Similarly, 
+                you shouldn't be forced to do so to analyze your A/B result.</p>
+                <p>Just type in your questions in the <b>Your Question</b> box below and push <b>Analyze</b>, that is it!</p>
+                <p>And don't be shy to use your microphone to spit out your question, in any supported languages!</p>
+              </div>
+            </div>
+        </div>
+        <!-- voice input -->
+        <div class="row">
+            <h3 class="center" id="headline">
+              Start to Ask Questions about Data
+            </h3>
+            <div id="info">
+              <p id="info_start">Click on the microphone icon and begin speaking, or type the questions directly below.</p>
+              <p id="info_speak_now">Speak now.</p>
+              <p id="info_no_speech">No speech was detected. You may need to adjust your
+                <a href="//support.google.com/chrome/bin/answer.py?hl=en&amp;answer=1407892">
+                  microphone settings</a>.</p>
+              <p id="info_no_microphone" style="display:none">
+                No microphone was found. Ensure that a microphone is installed and that
+                <a href="//support.google.com/chrome/bin/answer.py?hl=en&amp;answer=1407892">
+                microphone settings</a> are configured correctly.</p>
+              <p id="info_allow">Click the "Allow" button above to enable your microphone.</p>
+              <p id="info_denied">Permission to use microphone was denied.</p>
+              <p id="info_blocked">Permission to use microphone is blocked. To change,
+                go to chrome://settings/contentExceptions#media-stream</p>
+              <p id="info_upgrade">Web Speech API is not supported by this browser.
+                 Upgrade to <a href="//www.google.com/chrome">Chrome</a>
+                 version 25 or later.</p>
+            </div>
+            <div class="right">
+              <button id="start_button" onclick="startButton(event)">
+                <img id="start_img" src="static/mic.gif" alt="Start"></button>
+            </div>
+            <div id="results">
+              <span id="final_span" class="final"></span>
+              <span id="interim_span" class="interim"></span>
+              <p>
+            </div>
+            <div class="center">
+              <div id="div_language">
+                <select id="select_language" onchange="updateCountry()"></select>
+                &nbsp;&nbsp;
+                <select id="select_dialect"></select>
+              </div>
+            </div>
+        </div>
+        <!-- questions -->
+        <div class="row">
+            <div class="col-lg-3">
+              <h4 id="question-list">Frequently asked questions</h4>
+              <ul class="list-group">
+                <li class="list-group-item">How many observations in different groups?</li>
+                <li class="list-group-item">What is the time range of data?</li>
+                <li class="list-group-item">What is the trend of data over time?</li>
+                <li class="list-group-item">What are the success rates of different groups?</li>
+                <li class="list-group-item">What are the success rates of groups from 2016 Feb to 2016 Nov?</li>
+                <li class="list-group-item">How do different groups compare to each other?</li>
+              </ul>
+            </div>
+            <div class="col-lg-9">
+              <div class="row">
+                <b>Your Question:</b> <input type="text" id="question"/>
+                <input type="button" id="analyze" value="Analyze"/>
+              </div>
+              <div class="row" id="answer">
+                <div id="answer-text" class="center-block center alert alert-info">
+                </div>
+                <div id="answer-plot" class="center-block center">
+                </div>
+              </div>
+            </div>
+        </div>
+        </div>
+        
+        <script src="http://cdn.pydata.org/bokeh/release/bokeh-0.12.3.min.js"></script>
+        <script src="http://cdn.pydata.org/bokeh/release/bokeh-widgets-0.12.3.min.js"></script>
+        <script src="{{ url_for('static', filename='voice.js') }}"></script>
+        <script src="{{ url_for('static', filename='analysis.js') }}"></script>
+    </body>
+</html>
